@@ -19,7 +19,9 @@ export default function CreateSplitPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/split/demo/pay?source=${source || 'unknown'}`);
+    // Generar ID único
+    const splitId = `split-${Date.now()}`;
+    router.push(`/business/split/${splitId}`);
   };
 
   return (

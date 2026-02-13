@@ -94,7 +94,7 @@ export default function WalletPage() {
               // Wallet INSTALADA - Click para conectar
               <Link 
                 key={wallet.name}
-                href="/profile"
+                href="/business/dashboard"
               >
                 <Button
                   variant="outline"
