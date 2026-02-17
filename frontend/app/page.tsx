@@ -1,24 +1,60 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Store, User, Sparkles } from "lucide-react";
+import { Store, User, Moon, Sun } from "lucide-react";
 
 export default function Home() {
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    // Cargar preferencia guardada
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDark(savedTheme === 'dark');
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', newTheme);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 flex flex-col items-center justify-center px-6 py-12">
-      {/* Logo con animación */}
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDark 
+        ? 'bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900' 
+        : 'bg-gradient-to-b from-gray-50 via-white to-gray-50'
+    } flex flex-col items-center justify-center px-6 py-12`}>
+      
+      {/* Toggle de tema - Arriba a la derecha */}
+      <button
+        onClick={toggleTheme}
+        className={`fixed top-6 right-6 p-3 rounded-full transition-all ${
+          isDark 
+            ? 'bg-slate-800 hover:bg-slate-700 text-yellow-400' 
+            : 'bg-white hover:bg-gray-100 text-gray-800 shadow-lg'
+        }`}
+      >
+        {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      </button>
+
+      {/* Logo */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="mb-12"
+        className="mb-16"
       >
         <Image
           src="/migo-logo.png"
-          alt="Migo - Friends share, Migo cares"
+          alt="Migo"
           width={300}
           height={120}
           priority
@@ -26,104 +62,78 @@ export default function Home() {
         />
       </motion.div>
 
-      {/* Título */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-center mb-8"
-      >
-        <h2 className="text-2xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-          <Sparkles className="w-6 h-6 text-[#FFB800]" />
-          ¿Cómo querés usar Migo?
-        </h2>
-        <p className="text-sm text-gray-600">Elegí tu perfil para comenzar</p>
-      </motion.div>
-
-      {/* Selector de vista - Cards con animación */}
-      <div className="w-full max-w-2xl grid md:grid-cols-2 gap-6 mb-8">
-        {/* Vista Cliente */}
+      {/* Cards - Sin títulos, solo iconos */}
+      <div className="w-full max-w-2xl grid md:grid-cols-2 gap-6">
+        
+        {/* Cliente */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Link href="/client">
-            <Card className="glass-card h-full border-2 hover:border-[#00D9FF] hover:shadow-xl transition-all cursor-pointer overflow-hidden group">
-              <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-5 transition-opacity" />
-              <CardContent className="p-8 flex flex-col items-center text-center h-full justify-center relative">
+          <Link href="/pay/demo-123">
+            <Card className={`h-full border-2 transition-all cursor-pointer overflow-hidden group ${
+              isDark
+                ? 'bg-slate-800/50 border-slate-700 hover:border-[#00D9FF] hover:shadow-xl hover:shadow-[#00D9FF]/20'
+                : 'bg-white border-gray-200 hover:border-[#00D9FF] hover:shadow-xl'
+            }`}>
+              <CardContent className="p-12 flex flex-col items-center justify-center h-full">
                 <motion.div
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
-                  className="w-20 h-20 bg-gradient-to-br from-[#00D9FF] to-[#00B8DD] rounded-2xl flex items-center justify-center mb-4 shadow-lg"
+                  className="w-24 h-24 bg-gradient-to-br from-[#00D9FF] to-[#00B8DD] rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-[#00D9FF]/30"
                 >
-                  <User className="w-10 h-10 text-white" />
+                  <User className="w-12 h-12 text-white" />
                 </motion.div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  Soy Cliente
+                <h3 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  Cliente
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Quiero pagar mi parte de un gasto compartido
-                </p>
-                <div className="mt-auto">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#00D9FF] text-white rounded-full text-sm font-medium">
-                    Escanear QR →
-                  </span>
-                </div>
               </CardContent>
             </Card>
           </Link>
         </motion.div>
 
-        {/* Vista Negocio */}
+        {/* Negocio */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.3 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Link href="/business">
-            <Card className="glass-card h-full border-2 hover:border-[#006B7D] hover:shadow-xl transition-all cursor-pointer overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#006B7D] to-[#005563] opacity-0 group-hover:opacity-5 transition-opacity" />
-              <CardContent className="p-8 flex flex-col items-center text-center h-full justify-center relative">
+          <Link href="/pos">
+            <Card className={`h-full border-2 transition-all cursor-pointer overflow-hidden group ${
+              isDark
+                ? 'bg-slate-800/50 border-slate-700 hover:border-[#006B7D] hover:shadow-xl hover:shadow-[#006B7D]/20'
+                : 'bg-white border-gray-200 hover:border-[#006B7D] hover:shadow-xl'
+            }`}>
+              <CardContent className="p-12 flex flex-col items-center justify-center h-full">
                 <motion.div
                   whileHover={{ rotate: -360 }}
                   transition={{ duration: 0.5 }}
-                  className="w-20 h-20 bg-gradient-to-br from-[#006B7D] to-[#005563] rounded-2xl flex items-center justify-center mb-4 shadow-lg"
+                  className="w-24 h-24 bg-gradient-to-br from-[#006B7D] to-[#005563] rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-[#006B7D]/30"
                 >
-                  <Store className="w-10 h-10 text-white" />
+                  <Store className="w-12 h-12 text-white" />
                 </motion.div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  Soy Negocio
+                <h3 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  Negocio
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Quiero crear y administrar pagos compartidos
-                </p>
-                <div className="mt-auto">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#006B7D] text-white rounded-full text-sm font-medium">
-                    Administrar →
-                  </span>
-                </div>
               </CardContent>
             </Card>
           </Link>
         </motion.div>
       </div>
 
-      {/* Footer con animación */}
+      {/* Footer */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="text-center"
+        transition={{ delay: 0.5 }}
+        className="text-center mt-16"
       >
-        <p className="text-xs text-gray-400 mb-2">
-          Crypto o tradicional - tú eliges
-        </p>
-        <p className="text-xs text-gray-500">
+        <p className={`text-xs mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           Powered by Stellar · Soroban Smart Contracts
         </p>
       </motion.div>
