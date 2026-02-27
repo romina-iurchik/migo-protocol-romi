@@ -1,5 +1,5 @@
 'use client';
-
+import { api } from '@/lib/api';
 import { fetchSplit } from '@/lib/api';
 import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -74,8 +74,13 @@ export default function PaySplitPage({ params }: { params: Promise<{ id: string 
   if (!split) return null;
 
   // Cálculo de tu parte
-  const participantsCount = split.participants.length || 1;
-  const shareAmount = split.totalAmount / participantsCount;
+const searchParams = new URLSearchParams(window.location.search);
+const personas = parseInt(searchParams.get('personas') || '1');
+const shareAmount = split.totalAmount / personas;
+
+
+
+
   const baseCurrency = split.settlementAsset.code;
 
   // Conversión de moneda
@@ -90,13 +95,18 @@ export default function PaySplitPage({ params }: { params: Promise<{ id: string 
     selectedCurrency === 'BTC' || selectedCurrency === 'ETH' ? 6 : 2
   );
 
-  const handlePayWithWallet = async (walletAction: string) => {
-    console.log(`Paying with ${walletAction}`);
-    alert(`Simulando pago con ${walletAction}...`);
-
-    setTimeout(() => {
+const handlePayWithWallet = async (walletAction: string) => {
+    try {
+      await api.payments.register(split.id, {
+        payerId: `user-${walletAction}-${Date.now()}`,
+        method: "STELLAR",
+        originalAsset: selectedCurrency,
+        originalAmount: shareAmount,
+      });
       router.push(`/pay/${split.id}/success`);
-    }, 2000);
+    } catch (err: any) {
+      alert('Error al registrar el pago: ' + err.message);
+    }
   };
 
   const availableWallets = WALLETS.filter(w => w.available);

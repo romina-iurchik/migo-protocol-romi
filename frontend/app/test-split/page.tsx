@@ -10,7 +10,7 @@ export default function TestSplitPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Reemplazá con un ID real de tu backend
-  const splitId = "f297e613-49f7-4a90-8a2f-79bb97eaef42";
+  const splitId = "3c152b14-f1bb-4949-8469-a91f151772d4";
 
   // useEffect se ejecuta cuando el componente se monta
   useEffect(() => {

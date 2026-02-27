@@ -47,7 +47,7 @@ try {
   };
 
   const shareAmount = amount && people ? (parseFloat(amount) / parseInt(people)).toFixed(2) : '0.00';
-  const qrData = `http://localhost:3000/pay/${splitId}`;
+  const qrData = `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/pay/${splitId}?personas=${people}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center p-4">
