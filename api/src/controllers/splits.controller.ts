@@ -108,7 +108,10 @@ export async function releaseSettlementController(
 
     res.json(split);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+      console.error("🔥 STELLAR RELEASE ERROR:");
+    console.error(error.response?.data || error);
+    throw error;
+    //res.status(400).json({ error: error.message });
   }
 }
 

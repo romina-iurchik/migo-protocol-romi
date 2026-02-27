@@ -51,7 +51,7 @@ export async function sendSettlementPayment(amount: string, settlementAsset: Ass
         amount,
       })
     )
-    .setTimeout(30)
+    .setTimeout(0) // para fines practicos y de testing va con tiempo indeterminado
     .build();
 
   transaction.sign(sourceKeypair);
