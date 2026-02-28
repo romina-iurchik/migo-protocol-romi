@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Split {
+  id              String    @id @default(uuid())
+  totalAmount     Float
+  mode            String
+  status          String    @default("PENDING")
+  network         String
+  assetType       String
+  assetCode       String
+  assetIssuer     String?
+  webhookUrl      String?
+  stellarTxHash   String?
+  createdAt       DateTime  @default(now())
+  expiresAt       DateTime?
+  releasedAt      DateTime?
+  payments        Payment[]
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  splitId         String
+  split           Split    @relation(fields: [splitId], references: [id])
+  payerId         String
+  method          String
+  originalAsset   String
+  originalAmount  Float
+  conversionRate  Float    @default(1)
+  convertedAmount Float
+  externalStatus  String   @default("CONFIRMED")
+  createdAt       DateTime @default(now())
+}
