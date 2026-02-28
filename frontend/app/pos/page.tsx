@@ -1,4 +1,5 @@
 'use client';
+import { api } from '@/lib/api';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -15,15 +16,27 @@ export default function POSPage() {
   const [people, setPeople] = useState('2');
   const [splitId, setSplitId] = useState('');
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!amount || parseFloat(amount) <= 0) {
       alert('Ingresa un monto válido');
       return;
     }
 
-    const newSplitId = `split-${Date.now()}`;
-    setSplitId(newSplitId);
-    setStep('qr');
+try {
+      const split = await api.splits.create({
+        totalAmount: parseFloat(amount),
+        mode: "OPEN_POOL",
+        settlementAsset: {
+          network: "stellar",
+          type: "native",
+          code: "XLM",
+        },
+      });
+      setSplitId(split.id);
+      setStep('qr');
+    } catch (err: any) {
+      alert('Error al crear el split: ' + err.message);
+    }
   };
 
   const handleReset = () => {
@@ -34,7 +47,7 @@ export default function POSPage() {
   };
 
   const shareAmount = amount && people ? (parseFloat(amount) / parseInt(people)).toFixed(2) : '0.00';
-  const qrData = `https://migo.app/pay/${splitId}`;
+  const qrData = `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/pay/${splitId}?personas=${people}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center p-4">
