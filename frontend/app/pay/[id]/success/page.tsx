@@ -4,8 +4,17 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+//agrego imports
+import { ExternalLink } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+// //
 
 export default function PaymentSuccessPage() {
+
+  const searchParams = useSearchParams();
+  const txHash = searchParams.get('txHash');
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-900 via-slate-800 to-slate-900 text-white flex flex-col items-center justify-center px-6">
       <motion.div
@@ -33,6 +42,50 @@ export default function PaymentSuccessPage() {
           La transacción se confirmó en la red Stellar
         </p>
       </motion.div>
+      
+
+    {txHash && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mb-8 w-full max-w-md"
+        >
+          
+            <a href={`https://stellar.expert/explorer/testnet/tx/${txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl hover:bg-emerald-500/20 transition-colors">
+            <div>
+              <p className="text-sm font-semibold text-emerald-400 mb-1">Ver en Stellar Expert</p>
+              <p className="text-xs text-slate-400 font-mono truncate w-64">
+                {txHash}
+              </p>
+            </div>
+            <ExternalLink className="w-5 h-5 text-emerald-400 shrink-0" />
+          </a>
+        </motion.div>
+      )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <motion.div
         initial={{ opacity: 0 }}

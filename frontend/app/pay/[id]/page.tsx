@@ -97,13 +97,15 @@ const shareAmount = split.totalAmount / personas;
 
 const handlePayWithWallet = async (walletAction: string) => {
     try {
-      await api.payments.register(split.id, {
+      const data = await api.payments.register(split.id, {
         payerId: `user-${walletAction}-${Date.now()}`,
         method: "STELLAR",
         originalAsset: selectedCurrency,
         originalAmount: shareAmount,
       });
-      router.push(`/pay/${split.id}/success`);
+
+      // router.push(`/pay/${split.id}/success`); reemplazo por:
+      router.push(`/pay/${split.id}/success?txHash=${data.stellarTxHash || ''}`);
     } catch (err: any) {
       alert('Error al registrar el pago: ' + err.message);
     }
